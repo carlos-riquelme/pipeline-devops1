@@ -13,31 +13,22 @@ def call(){
         NEXUS_PASSWORD = credentials('NEXUS-PASS')
     }
     parameters {
-        choice(
-            name:'compileTool',
-            choices: ['Maven', 'Gradle'],
-            description: 'Seleccione herramienta de compilacion'
-        )
+        choice choices: ['maven', 'gradle'], description: 'Seleccione una herramienta para preceder a compilar', name: 'compileTool'
+            text description: 'Enviar los stages separados por ";"... Vacío si necesita todos los stages', name: 'stages'
     }
     stages {
         stage("Pipeline"){
             steps {
-                script{
-                  switch(params.compileTool)
-                    {
-                        case 'Maven':
-                            // def ejecucion = load 'maven.groovy'
-                            // ejecucion.call()
-                            maven.call();
-                        break;
-                        case 'Gradle':
-                            // def ejecucion = load 'gradle.groovy'
-                            // ejecucion.call()
-                            gradle.call()
-                        break;
-                    }
-                }
-            }
+                  script{
+                      sh "env"
+                      env.TAREA = ""
+                      if(params.compileTool == 'maven'){
+                        maven.call(params.stages);
+                      }else{
+                        gradle.call(params.stages)
+                      }
+                  }
+              }
             post{
                 success{
                     slackSend color: 'good', message: "[Carlos  Riquelme] [${JOB_NAME}] [${BUILD_TAG}] Ejecucion Exitosa", teamDomain: 'dipdevopsusac-tr94431', tokenCredentialId: '09bb43a7-7b85-4368-8bcb-b6cc51f1010e'
