@@ -33,22 +33,6 @@ def call(stages){
             "${stageFunction}"()
         }
     }
-​
-//     if (stages.isEmpty()) {
-//         echo 'El pipeline se ejecutará completo'
-//         allStages()
-//     } else {
-//         echo 'Stages a ejecutar :' + stages
-//         listStagesOrder.each { stageName, stageFunction ->
-//             stagesList.each{ stageToExecute ->//variable as param
-//                 if(stageName.equals(stageToExecute)){
-//                 echo 'Ejecutando ' + stageFunction
-//                 "${stageFunction}"()
-//                 }
-//             }
-//         }
-// ​
-//     }
 }
 
 def allStages(){
