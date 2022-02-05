@@ -19,26 +19,23 @@ def call(){
             }
             stages {
                 stage("Pipeline"){
-                    when {
-                            expression { params.REQUESTED_ACTION == 'feature-cicd' || params.REQUESTED_ACTION == 'develop'}
-                        }
-                    steps {
+                        steps {
                         echo "develop o feature"
-                        // script{
-                        //     sh "env"
-                        //     env.TAREA = ""
-                        //     if(params.compileTool == 'maven'){
-                        //         maven.call(params.stages);
-                        //     }else{
-                        //         gradle.call(params.stages)
-                        //     }
-                        // }
-                    }
-                    when {
-                        expression { params.REQUESTED_ACTION == 'release' }
-                    }
-                    steps {
-                        echo "release"
+                        script{
+                            sh "env"
+                            env.TAREA = ""
+                            if(params.compileTool == 'maven'){
+                                maven.call(params.stages);
+                            }else{
+                                if(params.REQUESTED_ACTION == 'feature-cicd') {
+                                    gradle.call(params.stages)
+                                } else if (params.REQUESTED_ACTION == 'develop') {
+                                    gradle.call(params.stages)
+                                } else {
+                                    echo "hola"
+                                }
+                            }
+                        }
                     }
                     post{
                         success{
