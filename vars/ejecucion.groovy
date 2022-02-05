@@ -15,19 +15,30 @@ def call(){
             parameters {
                 choice choices: ['maven', 'gradle'], description: 'Seleccione una herramienta para preceder a compilar', name: 'compileTool'
                 text description: 'Enviar los stages separados por ";"... Vacío si necesita todos los stages', name: 'stages'
+                choice choices: ['feature-cicd', 'develop', 'release', description: 'Seleccione la rama', name: 'REQUESTED_ACTION']
             }
             stages {
                 stage("Pipeline"){
-                    steps {
-                        script{
-                            sh "env"
-                            env.TAREA = ""
-                            if(params.compileTool == 'maven'){
-                                maven.call(params.stages);
-                            }else{
-                                gradle.call(params.stages)
-                            }
+                    when {
+                            expression { params.REQUESTED_ACTION == 'feature-cicd' || params.REQUESTED_ACTION == 'develop'}
                         }
+                    steps {
+                        echo "develop o feature"
+                        // script{
+                        //     sh "env"
+                        //     env.TAREA = ""
+                        //     if(params.compileTool == 'maven'){
+                        //         maven.call(params.stages);
+                        //     }else{
+                        //         gradle.call(params.stages)
+                        //     }
+                        // }
+                    }
+                    when {
+                        expression { params.REQUESTED_ACTION == 'release' }
+                    }
+                    steps {
+                        echo "release"
                     }
                     post{
                         success{
